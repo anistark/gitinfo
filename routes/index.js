@@ -14,7 +14,7 @@ router.post('/getIssueList', function(req, res, next) {
 	var baseUrl = 'https://api.github.com/repos/';
 	var issueUrl = '/issues';
 	var url = baseUrl+ req.body.url+ issueUrl;
-	// Call extract data
+	// Call helper function to extract data from Repo
 	var issuesData = helper.repoInfo(url, function(success) {
 		console.log('success - '+JSON.stringify(success));
 		res.render('index', { title: 'GitInfo', success: 1, body: success });

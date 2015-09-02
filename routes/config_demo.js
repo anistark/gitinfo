@@ -7,7 +7,7 @@ function define(name, value) {
 	});
 }
 
-// Error Codes
+// Client Id And Client Secret For Outh purpose
 
 define( 'client_id', "your_client_id" );
 define( 'client_secret', "your_client_secret" );
