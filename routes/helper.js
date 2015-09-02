@@ -91,7 +91,7 @@ exports.repoInfo = function(url, sucCb, errCb) {
 }
 
 exports.subRepoInfo = function(subUrl, soFarData) {
-	var k = 0;
+	var k = 1;
 	request({
 		uri: subUrl,
 		method: 'GET',
@@ -146,10 +146,11 @@ exports.subRepoInfo = function(subUrl, soFarData) {
 						if(k == soFarData['lastPageNum']){
 							console.log('in');
 							soFarData['isNext'] = 0;
+							return soFarData;
 						} else {
 							soFarData['isNext'] = 1;
+							return soFarData;
 						}
-						return soFarData;
 					});
 				} else {
 					console.log('error - '+ error);
