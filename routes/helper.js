@@ -92,7 +92,6 @@ exports.subRepoInfo = function(subUrl, soFarData) {
 		uri: subUrl,
 		method: 'GET',
 		headers: {
-			'access_token': token,
 			'User-Agent': 'request'
 		}
 	}, function (error, response, body) {
