@@ -2,7 +2,7 @@ extends layout
 
 block content
 	form(action="/getIssueList" class="form" accept-charset="utf-8" method="post")
-		input(type="text" class="form-control" id="url" name="url" value="Shippable/support")
+		input(type="text" class="form-control" id="url" name="url" value="duckduckgo/zeroclickinfo-goodies")
 		br
 		button(class="btn btn-success" type="submit") Submit
 	br
@@ -22,7 +22,7 @@ block content
 						td= body.openedWeek
 					tr
 						td Open issues that were opened more than 7 days ago
-						td= body.openedWeek
+						td= body.openedWeekAgo
 			- } else if(success == 0 ){
 				h4= error
 			- }
