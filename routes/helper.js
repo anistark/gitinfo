@@ -74,7 +74,7 @@ exports.repoInfo = function(url, sucCb, errCb) {
 						console.log('nextUrl 1 - '+ nextUrl);
 						soFarData['nextPageNum'] = i;
 						var subData = helper.subRepoInfo(nextUrl, soFarData);
-						if(subData['isNext'] != 1) {
+						if(soFarData['isNext'] != 1) {
 							console.log('last page');
 							return sucCb(soFarData);
 						}
