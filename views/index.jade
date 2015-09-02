@@ -1,0 +1,29 @@
+extends layout
+
+block content
+	form(action="/getIssueList" class="form" accept-charset="utf-8" method="post")
+		input(type="text" class="form-control" id="url" name="url" value="Shippable/support")
+		br
+		button(class="btn btn-success" type="submit") Submit
+	br
+	div(class="result-table" id="result-table")
+		h2 Result
+		- if (typeof success != "undefined") { 
+			- if(success == 1){
+				table(class="table")
+					tr
+						td Open Issues
+						td= body.openIssues
+					tr
+						td Open Issues in Last 24 hours
+						td= body.openedToday
+					tr
+						td Open issues that were opened more than 24 hours ago but less than 7 days ago
+						td= body.openedWeek
+					tr
+						td Open issues that were opened more than 7 days ago
+						td= body.openedWeek
+			- } else if(success == 0 ){
+				h4= error
+			- }
+		- }
