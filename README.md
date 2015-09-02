@@ -22,9 +22,7 @@ or if nodemon is installed:
 ```
  nodemon
 ```
-Provide the 
-```
-username/reponame
-```
-in the text box and click on the button to generate the result.
+Provide the url of your github repo (Ex: https://github.com/Shippable/support) in the text box and click on the button Submit to generate the result.
 
+
+For more info mail me at anirudhastark@yahoo.com
