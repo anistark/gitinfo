@@ -52,6 +52,7 @@ exports.repoInfo = function(url, sucCb, errCb) {
 				soFarData['openedToday'] = 0;
 				soFarData['openedWeek'] = 0;
 				soFarData['openedWeekAgo'] = 0;
+				soFarData['isNext'] = 1;
 				if(link) {
 					var re = /\<((?:(?!\>).)+)/img;
 					// console.log("split", link.split(re));
@@ -66,12 +67,14 @@ exports.repoInfo = function(url, sucCb, errCb) {
 					soFarData['openedToday']+=openedToday;
 					soFarData['openedWeek']+=openedWeek;
 					soFarData['openedWeekAgo']+=openedWeekAgo;
+					soFarData['lastPageNum'] = lastPageNum;
 					for (var i = nextPageNum; i <= lastPageNum; i++) {
 						 var nextUrl = z[0].split(", ")[0].split(" ")[0].split("page=")[0] + 'page=' + i;
 						// console.log('soFarData 1 - '+ JSON.stringify(soFarData));
 						console.log('nextUrl 1 - '+ nextUrl);
+						soFarData['nextPageNum'] = i;
 						var subData = helper.subRepoInfo(nextUrl, soFarData);
-						if(i == lastPageNum) {
+						if(subData['isNext'] != 1) {
 							console.log('last page');
 							return sucCb(soFarData);
 						}
@@ -105,7 +108,6 @@ exports.subRepoInfo = function(subUrl, soFarData) {
 			}, function (error, response, body) {
 				if (!error) {
 					var issues = JSON.parse(response.body);
-					console.log('response headers - '+ JSON.parse(response.headers));
 					var openIssues = 0;
 					var openedToday = 0;
 					var openedWeek = 0;
@@ -139,6 +141,11 @@ exports.subRepoInfo = function(subUrl, soFarData) {
 						console.log('return err 2 - '+ err);
 						// Final return
 						console.log('soFarData - '+ JSON.stringify(soFarData));
+						if(soFarData['nextPageNum'] == soFarData['lastPageNum']){
+							soFarData['isNext'] = 0;
+						} else {
+							soFarData['isNext'] = 1;
+						}
 						return soFarData;
 					});
 				} else {
