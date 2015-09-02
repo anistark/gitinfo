@@ -1,10 +1,14 @@
 var request = require('request'),
 	async = require("async"),
 	moment = require('moment'),
-	helper = require('../routes/helper');
+	helper = require('../routes/helper'),
+	config = require('../routes/config');
 
 exports.repoInfo = function(url, sucCb, errCb) {
 	var issuesData = {};
+	var client_id = config.client_id;
+	var client_secret = config.client_secret;
+	url = url+'?client_id='+client_id+'&client_secret='+client_secret;
 	request({
 		uri: url,
 		method: 'GET',
@@ -44,8 +48,6 @@ exports.repoInfo = function(url, sucCb, errCb) {
 
 				callback();
 			}, function(err) {
-				console.log('return err 1  - '+ typeof err);
-				console.log('return err val 1  - '+ err);
 				var link = response.headers.link;
 				var soFarData = {};
 				soFarData['openIssues'] = 0;
@@ -53,11 +55,10 @@ exports.repoInfo = function(url, sucCb, errCb) {
 				soFarData['openedWeek'] = 0;
 				soFarData['openedWeekAgo'] = 0;
 				soFarData['isNext'] = 1;
+				soFarData['success'] = 0;
 				if(link) {
 					var re = /\<((?:(?!\>).)+)/img;
-					// console.log("split", link.split(re));
 					z = link.replace(/[>";<]/g,"").split(re);
-					// console.log('z = '+ z);
 					nextUrl = z[0].split(", ")[0].split(" ")[0];
 					lastUrl = z[0].split(", ")[1].split(" ")[0];
 					nextPageNum = z[0].split(", ")[0].split(" ")[0].split("page=")[1];
@@ -70,14 +71,16 @@ exports.repoInfo = function(url, sucCb, errCb) {
 					soFarData['lastPageNum'] = lastPageNum;
 					for (var i = nextPageNum; i <= lastPageNum; i++) {
 						 var nextUrl = z[0].split(", ")[0].split(" ")[0].split("page=")[0] + 'page=' + i;
-						// console.log('soFarData 1 - '+ JSON.stringify(soFarData));
-						console.log('nextUrl 1 - '+ nextUrl);
 						soFarData['nextPageNum'] = i;
-						var subData = helper.subRepoInfo(nextUrl, soFarData);
-						if(soFarData['isNext'] != 1) {
-							console.log('last page');
-							return sucCb(soFarData);
-						}
+						helper.subRepoInfo(nextUrl, soFarData, function(succCb){
+							if(succCb['success'] == 1) {
+								return sucCb(soFarData);
+							}
+						}, function(errrCb){
+							return errCb(errrCb);
+						}, function(nextCb){
+							return;
+						});
 					};
 				} else {
 					// Nothing
@@ -90,8 +93,7 @@ exports.repoInfo = function(url, sucCb, errCb) {
 	});
 }
 
-exports.subRepoInfo = function(subUrl, soFarData) {
-	var k = 1;
+exports.subRepoInfo = function(subUrl, soFarData, succObj, errrObj, nextObj) {
 	request({
 		uri: subUrl,
 		method: 'GET',
@@ -139,22 +141,20 @@ exports.subRepoInfo = function(subUrl, soFarData) {
 						callback();
 					},
 					function(err) {
-						k+=1;
 						console.log('return err 2 - '+ err);
+						soFarData['isNext']+=1;
 						// Final return
-						console.log('soFarData - '+ JSON.stringify(soFarData));
-						if(k == soFarData['lastPageNum']){
-							console.log('in');
-							soFarData['isNext'] = 0;
-							return soFarData;
+						if(soFarData['isNext'].toString() == soFarData['lastPageNum']){
+							soFarData['success'] = 1;
+							succObj(soFarData);
 						} else {
-							soFarData['isNext'] = 1;
-							return soFarData;
+							soFarData['success'] = 0;
+							nextObj(soFarData);
 						}
 					});
 				} else {
 					console.log('error - '+ error);
-					return error;
+					errrObj(error);
 				}
 			});
 		} else {
