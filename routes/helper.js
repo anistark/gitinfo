@@ -5,7 +5,6 @@ var request = require('request'),
 
 exports.repoInfo = function(url, sucCb, errCb) {
 	var issuesData = {};
-	var token = 'd92d68305ca1afeacd61f938a68a29fbf1f3a489';
 	request({
 		uri: url,
 		method: 'GET',
@@ -15,7 +14,6 @@ exports.repoInfo = function(url, sucCb, errCb) {
 	}, function (error, response, body) {
 		if (!error) {
 			var issues = JSON.parse(response.body);
-			console.log('issues - '+ JSON.stringify(issues));
 			var openIssues = 0;
 			var openedToday = 0;
 			var openedWeek = 0;
@@ -90,7 +88,6 @@ exports.repoInfo = function(url, sucCb, errCb) {
 }
 
 exports.subRepoInfo = function(subUrl, soFarData) {
-	var token = 'd92d68305ca1afeacd61f938a68a29fbf1f3a489';
 	request({
 		uri: subUrl,
 		method: 'GET',
@@ -109,7 +106,7 @@ exports.subRepoInfo = function(subUrl, soFarData) {
 			}, function (error, response, body) {
 				if (!error) {
 					var issues = JSON.parse(response.body);
-					// console.log('response headers - '+ JSON.parse(response.headers));
+					console.log('response headers - '+ JSON.parse(response.headers));
 					var openIssues = 0;
 					var openedToday = 0;
 					var openedWeek = 0;
